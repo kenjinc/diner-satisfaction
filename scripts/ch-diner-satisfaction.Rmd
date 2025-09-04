@@ -1,0 +1,116 @@
+---
+title: "CH Diner Satisfaction"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## packages
+
+```{r}
+library(tidyverse)
+library(ggpubr)
+```
+
+## data
+
+```{r}
+ch_satisfaction <- read.csv("/Users/kenjinchang/github/diner-satisfaction/data/ch-data.csv")
+```
+
+## cleaning
+
+```{r}
+ch_satisfaction %>%
+  group_by(period) %>%
+  summarise(n=n(),mean_overall=mean(satisfaction),sd=sd(satisfaction))
+```
+
+```{r}
+ch_satisfaction <- ch_satisfaction %>%
+  select(period,variety,selection,accuracy,timely,interruptions,taste,texture,temperature,presentation,portions,healthy,satisfaction) %>%
+  mutate(mean_sat=(variety+selection+accuracy+timely+interruptions+taste+texture+temperature+presentation+portions+healthy+satisfaction)/12)
+```
+
+```{r}
+ch_satisfaction %>%
+  group_by(period) %>%
+  summarise(n=n(),mean_satisfaction=mean(mean_sat),sd=sd(mean_sat))
+```
+
+```{r}
+ch_baseline <- ch_satisfaction %>% 
+  filter(period=="baseline") %>%
+  select(mean_sat) 
+ch_baseline
+```
+
+```{r}
+ch_pilot <- ch_satisfaction %>% 
+  filter(period=="pilot") %>%
+  select(mean_sat) 
+ch_pilot
+```
+
+```{r}
+hyp_test <- t.test(ch_baseline,ch_pilot,alternative="two.sided",var.equal=FALSE)
+```
+
+```{r}
+hyp_test
+```
+
+```{r}
+ch_baseline <- ch_satisfaction %>% 
+  filter(period=="baseline") %>%
+  select(satisfaction) 
+ch_baseline
+```
+
+```{r}
+ch_pilot <- ch_satisfaction %>% 
+  filter(period=="pilot") %>%
+  select(satisfaction) 
+ch_pilot
+```
+
+```{r}
+hyp_test <- t.test(ch_baseline,ch_pilot,alternative="two.sided",var.equal=FALSE)
+```
+
+```{r}
+hyp_test
+```
+
+
+```{r}
+ch_satisfaction
+```
+
+
+
+
+```{r}
+ch_baseline <- ch_satisfaction %>% 
+  filter(period=="baseline") %>%
+  select(presentation) 
+ch_baseline
+```
+
+```{r}
+ch_pilot <- ch_satisfaction %>% 
+  filter(period=="pilot") %>%
+  select(presentation) 
+ch_pilot
+```
+
+
+```{r}
+hyp_test <- t.test(ch_baseline,ch_pilot,alternative="two.sided",var.equal=FALSE)
+```
+
+```{r}
+hyp_test
+```
